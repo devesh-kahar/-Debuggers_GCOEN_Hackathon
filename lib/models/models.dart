@@ -1,51 +1,8 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'crime_incident.dart';
+export 'crime_incident.dart';
 
-// ============================================================================
-// CRIME INCIDENT MODEL
-// ============================================================================
-class CrimeIncident {
-  final String id;
-  final double latitude;
-  final double longitude;
-  final String category;
-  final String? outcomeStatus;
-  final DateTime date;
-  final String? location;
-  final String severity;
-
-  CrimeIncident({
-    required this.id,
-    required this.latitude,
-    required this.longitude,
-    required this.category,
-    this.outcomeStatus,
-    required this.date,
-    this.location,
-    required this.severity,
-  });
-
-  factory CrimeIncident.fromUKPoliceJson(Map<String, dynamic> json) {
-    return CrimeIncident(
-      id: json['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
-      latitude: double.parse(json['location']['latitude']),
-      longitude: double.parse(json['location']['longitude']),
-      category: json['category'] ?? 'unknown',
-      outcomeStatus: json['outcome_status']?['category'],
-      date: DateTime.parse(json['month'] + '-01'),
-      location: json['location']['street']['name'],
-      severity: _calculateSeverity(json['category']),
-    );
-  }
-
-  static String _calculateSeverity(String? category) {
-    if (category == null) return 'low';
-    final violent = ['violent-crime', 'robbery', 'assault', 'homicide'];
-    final moderate = ['burglary', 'theft', 'vehicle-crime'];
-    if (violent.any((v) => category.toLowerCase().contains(v))) return 'high';
-    if (moderate.any((m) => category.toLowerCase().contains(m))) return 'medium';
-    return 'low';
-  }
-}
+// CrimeIncident is defined in crime_incident.dart (imported above)
 
 // ============================================================================
 // ROUTE SAFETY MODEL
@@ -59,6 +16,8 @@ class RouteSafety {
   final List<CrimeIncident> nearbyCrimes;
   final int streetLightCount;
   final String summary;
+  final String safetyNarration;
+  final bool isMock;
 
   RouteSafety({
     required this.routeId,
@@ -69,6 +28,8 @@ class RouteSafety {
     required this.nearbyCrimes,
     required this.streetLightCount,
     required this.summary,
+    this.safetyNarration = '',
+    this.isMock = false,
   });
 
   String get distanceText {
@@ -80,11 +41,29 @@ class RouteSafety {
     final minutes = (durationSeconds / 60).round();
     if (minutes < 60) return '$minutes min';
     final hours = (minutes / 60).floor();
-    final remainingMinutes = minutes % 60;
-    return '$hours h $remainingMinutes min';
+    final rem = minutes % 60;
+    return '$hours h $rem min';
   }
 
   bool get isRecommended => safetyScore.overall >= 70;
+
+  RouteSafety copyWith({
+    String? safetyNarration,
+    SafetyScore? safetyScore,
+    List<CrimeIncident>? nearbyCrimes,
+  }) =>
+      RouteSafety(
+        routeId: routeId,
+        polylinePoints: polylinePoints,
+        distanceMeters: distanceMeters,
+        durationSeconds: durationSeconds,
+        safetyScore: safetyScore ?? this.safetyScore,
+        nearbyCrimes: nearbyCrimes ?? this.nearbyCrimes,
+        streetLightCount: streetLightCount,
+        summary: summary,
+        safetyNarration: safetyNarration ?? this.safetyNarration,
+        isMock: isMock,
+      );
 }
 
 class SafetyScore {
@@ -119,14 +98,14 @@ class SafetyScore {
   }) {
     final crimeScore = (100 - (crimeCount * 10)).clamp(0, 100).toDouble();
     final lightsPerKm = (streetLightCount / (routeLength / 1000));
-    final lightingScore = (lightsPerKm * 10).clamp(0, 100).toDouble();
+    final lightingScore = (lightsPerKm * 10).clamp(0.0, 100.0);
     final timeScore = isNightTime ? 60.0 : 100.0;
     final userReportScore = (100 - (userReports * 5)).clamp(0, 100).toDouble();
-    final overall = (crimeScore * 0.35 + lightingScore * 0.25 + timeScore * 0.25 + userReportScore * 0.15).clamp(0, 100);
+    final overall = (crimeScore * 0.35 + lightingScore * 0.25 + timeScore * 0.25 + userReportScore * 0.15).clamp(0.0, 100.0);
 
     return SafetyScore(
-      overall: overall,
-      lightingScore: lightingScore,
+      overall: overall.toDouble(),
+      lightingScore: lightingScore.toDouble(),
       crimeScore: crimeScore,
       timeScore: timeScore,
       userReportScore: userReportScore,

@@ -20,21 +20,17 @@ class _PanicButtonState extends State<PanicButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _pulseAnimation;
+  bool _isPressed = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1600),
       vsync: this,
     )..repeat(reverse: true);
 
-    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-
-    _pulseAnimation = Tween<double>(begin: 0.0, end: 20.0).animate(
+    _scaleAnimation = Tween<double>(begin: 0.97, end: 1.03).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
@@ -48,65 +44,70 @@ class _PanicButtonState extends State<PanicButton>
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: () {
+      onLongPressStart: (_) {
         HapticFeedback.heavyImpact();
+        setState(() => _isPressed = true);
+      },
+      onLongPressEnd: (_) {
+        setState(() => _isPressed = false);
         widget.onPressed();
       },
+      onLongPressCancel: () => setState(() => _isPressed = false),
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
-          return Container(
-            width: widget.size + _pulseAnimation.value,
-            height: widget.size + _pulseAnimation.value,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.danger.withOpacity(0.4),
-                  blurRadius: 20 + _pulseAnimation.value,
-                  spreadRadius: 5 + _pulseAnimation.value / 2,
-                ),
-              ],
-            ),
-            child: Transform.scale(
-              scale: _scaleAnimation.value,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.danger,
-                      AppColors.danger.withOpacity(0.8),
-                    ],
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.warning_rounded,
-                      size: 48,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'SOS',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Hold to activate',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white.withOpacity(0.9),
-                      ),
-                    ),
+          return Transform.scale(
+            scale: _isPressed ? 0.93 : _scaleAnimation.value,
+            child: Container(
+              width: widget.size,
+              height: widget.size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  center: const Alignment(-0.3, -0.3),
+                  colors: [
+                    _isPressed
+                        ? AppColors.danger.withAlpha(200)
+                        : AppColors.danger,
+                    AppColors.danger.withAlpha(200),
                   ],
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.danger.withAlpha(_isPressed ? 120 : 60),
+                    blurRadius: 24,
+                    spreadRadius: _isPressed ? 6 : 2,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.warning_rounded,
+                    size: 44,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'SOS',
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Hold to activate',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.white.withAlpha(200),
+                    ),
+                  ),
+                ],
               ),
             ),
           );

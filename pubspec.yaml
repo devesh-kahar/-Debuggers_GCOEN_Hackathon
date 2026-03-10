@@ -44,8 +44,8 @@ dependencies:
   # Permissions
   permission_handler: ^11.0.1
   
-  # Voice Detection - REMOVED (compatibility issues)
-  # speech_to_text: ^6.5.1
+  # Voice Detection (speech_to_text added via flutter pub add)
+  speech_to_text: ^7.3.0
   
   # Emergency Features
   url_launcher: ^6.2.2
@@ -83,6 +83,7 @@ dependencies:
   
   # Environment Variables
   flutter_dotenv: ^5.1.0
+  flutter_foreground_task: ^9.2.1
 
 dev_dependencies:
   flutter_test:
