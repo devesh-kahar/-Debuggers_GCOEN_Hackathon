@@ -1,0 +1,330 @@
+================================================================================
+                    SAFEGUARD APP - COMPLETE SETUP GUIDE
+================================================================================
+
+TOTAL TIME REQUIRED: 30-45 minutes
+DIFFICULTY: Easy to Medium
+
+================================================================================
+                        STEP 1: GOOGLE MAPS API (REQUIRED)
+================================================================================
+
+TIME: 15 minutes
+LINK: https://console.cloud.google.com
+
+STEPS:
+------
+1. Go to https://console.cloud.google.com
+2. Click "Select a project" at the top
+3. Click "NEW PROJECT"
+4. Project name: "SafeGuard-Hackathon"
+5. Click "CREATE"
+6. Wait for project to be created (30 seconds)
+
+7. Enable Required APIs:
+   - Click "APIs & Services" in left menu
+   - Click "Library"
+   - Search and ENABLE each of these (click Enable button):
+     ✓ Maps SDK for Android
+     ✓ Maps SDK for iOS
+     ✓ Directions API
+     ✓ Places API
+     ✓ Geocoding API
+     ✓ Custom Search API
+
+8. Create API Key:
+   - Click "Credentials" in left menu
+   - Click "CREATE CREDENTIALS" at top
+   - Select "API key"
+   - COPY the API key immediately (looks like: AIzaSyA...)
+   - Click "RESTRICT KEY" (optional but recommended)
+   - Under "API restrictions", select "Restrict key"
+   - Select all the APIs you enabled above
+   - Click "SAVE"
+
+9. Add to .env file:
+   - Open safeguard_app/.env
+   - Replace YOUR_GOOGLE_MAPS_API_KEY_HERE with your actual key
+   - Save the file
+
+EXAMPLE:
+GOOGLE_MAPS_API_KEY=AIzaSyAbc123def456ghi789jkl012mno345pqr
+
+================================================================================
+                   STEP 2: GOOGLE CUSTOM SEARCH (REQUIRED)
+================================================================================
+
+TIME: 10 minutes
+LINK: https://programmablesearchengine.google.com
+
+STEPS:
+------
+1. Go to https://programmablesearchengine.google.com
+2. Click "Get started" or "Add"
+3. Under "Sites to search":
+   - Select "Search the entire web"
+4. Name your search engine: "SafeGuard Privacy Scanner"
+5. Click "CREATE"
+6. COPY the "Search engine ID" (looks like: a1b2c3d4e5f6g7h8i)
+
+7. Add to .env file:
+   - Open safeguard_app/.env
+   - Replace YOUR_SEARCH_ENGINE_ID_HERE with your actual ID
+   - For GOOGLE_CUSTOM_SEARCH_API_KEY, use the SAME key from Step 1
+   - Save the file
+
+EXAMPLE:
+GOOGLE_CUSTOM_SEARCH_API_KEY=AIzaSyAbc123def456ghi789jkl012mno345pqr
+GOOGLE_CUSTOM_SEARCH_ENGINE_ID=a1b2c3d4e5f6g7h8i
+
+================================================================================
+                    STEP 3: UK POLICE API (NO KEY NEEDED!)
+================================================================================
+
+TIME: 0 minutes
+LINK: https://data.police.uk/api
+
+GOOD NEWS: This API is completely FREE and requires NO registration!
+The app is already configured to use it.
+
+TEST IT:
+Open browser and visit:
+https://data.police.uk/api/crimes-street/all-crime?lat=51.5074&lng=-0.1278&date=2024-01
+
+You should see JSON data with crime incidents.
+
+================================================================================
+              STEP 4: CRIMEOMETER (OPTIONAL - USA Crime Data)
+================================================================================
+
+TIME: 10 minutes (OPTIONAL)
+LINK: https://www.crimeometer.com/crime-data-api
+
+NOTE: Only needed if you want USA-specific crime data. 
+      UK Police API works globally for demo purposes.
+
+STEPS (if you want it):
+-----------------------
+1. Go to https://www.crimeometer.com/crime-data-api
+2. Click "Get API Key"
+3. Sign up with email
+4. Verify your email
+5. Login to dashboard
+6. Copy your API key
+7. Add to .env file:
+   CRIMEOMETER_API_KEY=your_key_here
+
+IF YOU SKIP THIS: Leave it empty in .env file (app will use UK Police API)
+
+================================================================================
+            STEP 5: HAVE I BEEN PWNED (OPTIONAL - Privacy Scanner)
+================================================================================
+
+TIME: 5 minutes (OPTIONAL)
+LINK: https://haveibeenpwned.com/API/v3
+
+NOTE: FREE tier works fine for hackathon! No key needed for basic checks.
+
+FOR FREE TIER (Recommended):
+----------------------------
+Leave HIBP_API_KEY empty in .env file
+The app will work with rate-limited free tier
+
+FOR PREMIUM TIER (Optional - $3.50/month):
+------------------------------------------
+1. Go to https://haveibeenpwned.com/API/Key
+2. Purchase API key
+3. Add to .env file:
+   HIBP_API_KEY=your_key_here
+
+================================================================================
+                    STEP 6: INSTALL DEPENDENCIES
+================================================================================
+
+TIME: 5 minutes
+
+COMMANDS:
+---------
+cd safeguard_app
+flutter pub get
+
+WAIT for all packages to download (may take 2-3 minutes)
+
+================================================================================
+                    STEP 7: CONFIGURE ANDROID
+================================================================================
+
+TIME: 5 minutes
+
+FILE: android/app/src/main/AndroidManifest.xml
+
+ADD THESE PERMISSIONS (inside <manifest> tag, before <application>):
+--------------------------------------------------------------------
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.RECORD_AUDIO"/>
+<uses-permission android:name="android.permission.SEND_SMS"/>
+<uses-permission android:name="android.permission.CALL_PHONE"/>
+<uses-permission android:name="android.permission.CAMERA"/>
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+<uses-permission android:name="android.permission.VIBRATE"/>
+<uses-permission android:name="android.permission.READ_CONTACTS"/>
+
+ADD GOOGLE MAPS KEY (inside <application> tag):
+-----------------------------------------------
+<meta-data
+    android:name="com.google.android.geo.API_KEY"
+    android:value="YOUR_GOOGLE_MAPS_API_KEY"/>
+
+Replace YOUR_GOOGLE_MAPS_API_KEY with your actual key from Step 1
+
+================================================================================
+                    STEP 8: CONFIGURE iOS (If using Mac)
+================================================================================
+
+TIME: 5 minutes
+
+FILE: ios/Runner/Info.plist
+
+ADD THESE PERMISSIONS (inside <dict> tag):
+------------------------------------------
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>We need your location to suggest safe routes</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>We need your location to track you during emergencies</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>We listen for emergency keywords to keep you safe</string>
+<key>NSCameraUsageDescription</key>
+<string>Record evidence during emergencies</string>
+<key>NSContactsUsageDescription</key>
+<string>Access contacts for emergency alerts</string>
+
+FILE: ios/Runner/AppDelegate.swift
+
+ADD GOOGLE MAPS INITIALIZATION:
+-------------------------------
+import GoogleMaps
+
+@UIApplicationMain
+@objc class AppDelegate: FlutterAppDelegate {
+  override func application(
+    _ application: UIApplication,
+    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+  ) -> Bool {
+    GMSServices.provideAPIKey("YOUR_GOOGLE_MAPS_API_KEY")
+    GeneratedPluginRegistrant.register(with: self)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+
+Replace YOUR_GOOGLE_MAPS_API_KEY with your actual key
+
+================================================================================
+                    STEP 9: RUN THE APP
+================================================================================
+
+TIME: 2 minutes
+
+CONNECT YOUR PHONE:
+-------------------
+1. Enable Developer Mode on your phone
+2. Connect via USB
+3. Enable USB Debugging
+
+RUN COMMAND:
+-----------
+flutter run
+
+FIRST TIME:
+-----------
+- App will ask for permissions
+- Grant ALL permissions (Location, Microphone, SMS, Phone, Camera, Contacts)
+- This is normal and required for features to work
+
+TEST EACH FEATURE:
+------------------
+1. Home Screen - Check panic button animates
+2. Routes Tab - Enter destination, see if map loads
+3. SOS Tab - Try voice detection ("help me")
+4. Track Tab - Start location sharing
+5. Privacy Tab - Run a scan with test email
+
+================================================================================
+                    STEP 10: TROUBLESHOOTING
+================================================================================
+
+PROBLEM: "API key not found"
+SOLUTION: 
+- Check .env file has correct keys
+- Make sure .env is in safeguard_app/ folder
+- Run: flutter clean && flutter pub get && flutter run
+
+PROBLEM: "Google Maps not showing"
+SOLUTION:
+- Wait 5 minutes after creating API key (activation time)
+- Check API key in AndroidManifest.xml matches .env
+- Make sure Maps SDK is enabled in Google Cloud Console
+
+PROBLEM: "Voice detection not working"
+SOLUTION:
+- Grant microphone permission
+- Test on REAL device (not emulator)
+- Speak clearly: "help me"
+
+PROBLEM: "Location not working"
+SOLUTION:
+- Grant location permission
+- Enable location services on device
+- Test outdoors (GPS works better outside)
+
+PROBLEM: "Build failed"
+SOLUTION:
+flutter clean
+flutter pub get
+flutter run
+
+================================================================================
+                    QUICK REFERENCE
+================================================================================
+
+REQUIRED APIs (Must have):
+✓ Google Maps API Key
+✓ Google Custom Search Engine ID
+
+OPTIONAL APIs (Nice to have):
+○ Crimeometer API Key (for USA crime data)
+○ HIBP API Key (for premium privacy scanning)
+
+MINIMUM SETUP TIME: 25 minutes (just required APIs)
+FULL SETUP TIME: 45 minutes (all APIs)
+
+================================================================================
+                    VERIFICATION CHECKLIST
+================================================================================
+
+Before hackathon, verify:
+□ .env file has Google Maps API key
+□ .env file has Custom Search Engine ID
+□ AndroidManifest.xml has Google Maps key
+□ All permissions added to AndroidManifest.xml
+□ flutter pub get completed successfully
+□ App runs on real device
+□ All 4 features tested and working
+□ All permissions granted on device
+
+================================================================================
+                    YOU'RE READY!
+================================================================================
+
+If all steps completed successfully, you're ready for the hackathon!
+
+NEXT STEPS:
+1. Read the app code to understand structure
+2. Test all features thoroughly
+3. Practice your demo (3 minutes)
+4. Get a good night's sleep!
+
+GOOD LUCK! 🚀
+
+================================================================================
