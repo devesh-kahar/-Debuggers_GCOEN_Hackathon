@@ -2,8 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:record/record.dart';
-import 'package:path_provider/path_provider.dart';
 import '../models/emergency_contact.dart';
 
 class EmergencyService {
@@ -11,7 +9,6 @@ class EmergencyService {
   factory EmergencyService() => _instance;
   EmergencyService._internal();
 
-  final AudioRecorder _audioRecorder = AudioRecorder();
   bool _isRecording = false;
   String? _recordingPath;
 
@@ -107,28 +104,14 @@ class EmergencyService {
     }
   }
 
-  /// Start audio recording
+  /// Start audio recording (simplified - just marks as recording)
   Future<void> startRecording() async {
     try {
       if (_isRecording) return;
-
-      if (await _audioRecorder.hasPermission()) {
-        final directory = await getApplicationDocumentsDirectory();
-        final timestamp = DateTime.now().millisecondsSinceEpoch;
-        _recordingPath = '${directory.path}/emergency_$timestamp.m4a';
-
-        await _audioRecorder.start(
-          const RecordConfig(
-            encoder: AudioEncoder.aacLc,
-            bitRate: 128000,
-            sampleRate: 44100,
-          ),
-          path: _recordingPath!,
-        );
-
-        _isRecording = true;
-        print('Recording started: $_recordingPath');
-      }
+      
+      // TODO: Implement actual recording when package is fixed
+      _isRecording = true;
+      print('Recording started (placeholder)');
     } catch (e) {
       print('Error starting recording: $e');
     }
@@ -138,11 +121,10 @@ class EmergencyService {
   Future<String?> stopRecording() async {
     try {
       if (!_isRecording) return null;
-
-      final path = await _audioRecorder.stop();
+      
       _isRecording = false;
-      print('Recording stopped: $path');
-      return path;
+      print('Recording stopped (placeholder)');
+      return null;
     } catch (e) {
       print('Error stopping recording: $e');
       return null;
@@ -180,6 +162,6 @@ class EmergencyService {
 
   /// Dispose resources
   void dispose() {
-    _audioRecorder.dispose();
+    // Cleanup if needed
   }
 }

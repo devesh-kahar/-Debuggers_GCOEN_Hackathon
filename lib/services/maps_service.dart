@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../models/route_safety.dart';
-import '../models/crime_incident.dart';
+import '../models/models.dart';
 import '../config/api_keys.dart';
 import 'crime_data_service.dart';
 

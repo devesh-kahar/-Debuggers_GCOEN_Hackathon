@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/crime_incident.dart';
@@ -124,17 +125,17 @@ class CrimeDataService {
     final dLat = _toRadians(lat2 - lat1);
     final dLon = _toRadians(lon2 - lon1);
 
-    final a = (dLat / 2).sin() * (dLat / 2).sin() +
-        _toRadians(lat1).cos() *
-            _toRadians(lat2).cos() *
-            (dLon / 2).sin() *
-            (dLon / 2).sin();
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_toRadians(lat1)) *
+            math.cos(_toRadians(lat2)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
 
-    final c = 2 * (a.sqrt()).asin();
+    final c = 2 * math.asin(math.sqrt(a));
     return earthRadius * c;
   }
 
-  double _toRadians(double degrees) => degrees * (3.14159265359 / 180);
+  double _toRadians(double degrees) => degrees * (math.pi / 180);
 
   String _getLastMonthDate() {
     final now = DateTime.now();

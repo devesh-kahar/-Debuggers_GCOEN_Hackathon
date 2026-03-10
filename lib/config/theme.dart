@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// App Color Palette
+/// App Color Palette - LIGHT THEME
 class AppColors {
   // Primary - Trust & Safety
   static const Color primary = Color(0xFF6C63FF);
@@ -13,16 +13,16 @@ class AppColors {
   static const Color moderate = Color(0xFFFFA726);
   static const Color danger = Color(0xFFEF5350);
   
-  // Backgrounds
-  static const Color background = Color(0xFF0F0F1E);
-  static const Color surface = Color(0xFF1A1A2E);
-  static const Color card = Color(0xFF16213E);
-  static const Color cardLight = Color(0xFF1F2937);
+  // Backgrounds - LIGHT
+  static const Color background = Color(0xFFF5F5F5);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color card = Color(0xFFFFFFFF);
+  static const Color cardLight = Color(0xFFF9F9F9);
   
-  // Text
-  static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFFB0B0B0);
-  static const Color textTertiary = Color(0xFF6B7280);
+  // Text - LIGHT THEME
+  static const Color textPrimary = Color(0xFF212121);
+  static const Color textSecondary = Color(0xFF757575);
+  static const Color textTertiary = Color(0xFF9E9E9E);
   
   // Accent
   static const Color accent = Color(0xFFFF6584);
@@ -35,17 +35,17 @@ class AppColors {
   static const Color info = Color(0xFF3B82F6);
 }
 
-/// App Theme Configuration
+/// App Theme Configuration - LIGHT THEME
 class AppTheme {
-  static ThemeData get darkTheme {
+  static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.background,
       primaryColor: AppColors.primary,
       
       // Color Scheme
-      colorScheme: const ColorScheme.dark(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.accent,
         surface: AppColors.surface,
@@ -107,7 +107,7 @@ class AppTheme {
       // App Bar Theme
       appBarTheme: const AppBarTheme(
         backgroundColor: AppColors.surface,
-        elevation: 0,
+        elevation: 1,
         centerTitle: true,
         iconTheme: IconThemeData(color: AppColors.textPrimary),
         titleTextStyle: TextStyle(
@@ -118,11 +118,11 @@ class AppTheme {
       ),
       
       // Card Theme
-      cardTheme: CardTheme(
+      cardTheme: const CardThemeData(
         color: AppColors.card,
-        elevation: 4,
+        elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
       ),
       
@@ -156,11 +156,11 @@ class AppTheme {
         fillColor: AppColors.cardLight,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

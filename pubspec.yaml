@@ -44,8 +44,8 @@ dependencies:
   # Permissions
   permission_handler: ^11.0.1
   
-  # Voice Detection
-  speech_to_text: ^6.5.1
+  # Voice Detection - REMOVED (compatibility issues)
+  # speech_to_text: ^6.5.1
   
   # Emergency Features
   url_launcher: ^6.2.2
@@ -53,8 +53,8 @@ dependencies:
   flutter_phone_direct_caller: ^2.1.1
   sensors_plus: ^4.0.2
   
-  # Audio/Video Recording
-  record: ^5.0.4
+  # Audio/Video Recording - REMOVED (compatibility issues)
+  # record: ^5.0.4
   path_provider: ^2.1.1
   
   # Firebase
@@ -72,8 +72,8 @@ dependencies:
   # Local Storage
   shared_preferences: ^2.2.2
   
-  # Contacts
-  contacts_service: ^0.6.3
+  # Contacts - REMOVED (causing build issues)
+  # contacts_service: ^0.6.3
   
   # UI Enhancements
   shimmer: ^3.0.0
